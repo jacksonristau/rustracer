@@ -5,6 +5,10 @@ use rustracer::raytracer;
 use rustracer::scene::Scene;
 
 fn main() {
+    
+}
+
+fn commandline() {
     let args: Vec<String> = env::args().collect();
     if args.len() != 2 {
         eprintln!("Usage: {} <scene file>", args[0]);
