@@ -1,4 +1,4 @@
-{
+export let scene = {
     "materials":[
         {
             "diffuse":{"r":1.0,"g":0.0,"b":0.0},
@@ -9,13 +9,6 @@
             "index_of_refraction":0.0,
             "n_val":0,
             "texture":null
-        }
-    ],
-    "spheres":[
-        {
-            "center":{"x":0.0,"y":0.0,"z":-8.0,"w":1.0},
-            "radius":2.0,
-            "material_index":0
         }
     ],
     "eye_pos":{
@@ -34,4 +27,4 @@
     },
     "frustum_width":2.0,
     "parallel":false
-}
+};

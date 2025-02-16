@@ -1,4 +1,4 @@
-use std::{fs::File, io::Read};
+use std::{fs::File, io::Read, fmt};
 
 //use crate::graphics::texture::Texture;
 use crate::graphics::material::Material;
@@ -67,5 +67,15 @@ impl Scene {
     pub fn write_to_file(&self, filename : &str) {
         let serialized: String = serde_json::to_string(&self).unwrap();
         std::fs::write(filename, serialized).expect("Unable to write file");
+    }
+}
+
+impl fmt::Display for Scene {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f, 
+            "width: {}, height: {}, fov: {}\neye position: {}, view direction: {}, up direction: {}\n# of materials: {}\n# of spheres {}\n",
+            self.resolution.0, self.resolution.1, self.hfov, self.eye_pos, self.view_dir, self.up_dir, self.materials.len(), self.spheres.len()
+        )
     }
 }
