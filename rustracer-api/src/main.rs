@@ -1,4 +1,7 @@
-use tide::{Request, Response};
+mod render;
+
+use async_std::io::{Cursor, ReadExt};
+use tide::{Body, Request, Response};
 use femme;
 use rustracer_core::scene::Scene;
 
@@ -8,7 +11,7 @@ async fn main() -> tide::Result<()> {
     femme::start();
     app.with(tide::log::LogMiddleware::new());
 
-    app.at("/api/render").post(handle_render);
+    app.at("/api/render").post(render);
     app.at("/").get(|_| async { Ok("Hello, world!") });
 
     println!("Server running at http://127.0.0.1:8080");
@@ -16,11 +19,11 @@ async fn main() -> tide::Result<()> {
     Ok(())
 }
 
-async fn handle_render(mut req: Request<()>) -> tide::Result {
+async fn render(mut req: Request<()>) -> tide::Result {
     let scene: Scene = req.body_json().await?;
-    println!("{}", scene);
-    let response = Response::builder(200)
-        .header("Access-Control-Allow-Origin", "http://localhost:5173")
-        .build();
+    let image = render::handle_render(scene);
+    let mut response = Response::new(200);
+    response.set_body(Body::from_bytes(image));
+    response.set_content_type("image/jpeg");
     Ok(response)
 }
