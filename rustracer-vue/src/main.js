@@ -6,6 +6,7 @@ import PrimeVue from 'primevue/config';
 import Button from "primevue/button";
 import Image from "primevue/image";
 import Card from 'primevue/card';
+import InputNumber from 'primevue/inputnumber';
 
 
 const app = createApp(App);
@@ -18,5 +19,6 @@ app.use(PrimeVue, {
 app.component('button', Button);
 app.component('Image', Image);
 app.component('Card', Card);
+app.component('InputNumber', InputNumber);
 
 app.mount('#app');

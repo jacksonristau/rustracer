@@ -1,13 +1,10 @@
 <script setup>
   import { ref } from 'vue'
   import { scene } from './assets/default_scene'
+  import ObjectEditor from './components/ObjectEditor.vue';
   const image_url = ref("");
 
-  scene['spheres'] = [{
-    center:{x:0.0,y:0.0,z:-8.0,w:1.0},
-    radius:2.0,
-    material_index:0
-  }];
+  scene['spheres'] = [];
 
   async function render() {
     const request = new Request("/api/render", {
@@ -26,50 +23,34 @@
 </script>
 
 <template>
-  <div class="container">
-    <div class="sidebar">
-      <h2>Scene</h2>
-      <Card>
-        <template #title>Sphere</template>
-        <template #content>
-          <
-        </template>
-      </Card>
+  <div class="sidebar">
+    <ObjectEditor />
+  </div>
+  <div class="main">
+    <h1>raytracer</h1>
+    <div class="image_box">
+      <Image :src="image_url" />
     </div>
-    <div class="main">
-      <h1>raytracer</h1>
-      <div class="image_box">
-        <Image :src="image_url" />
-      </div>
-      <div class="footer">
-        <button @click="render()">send</button>
-      </div>
+    <div class="footer">
+      <Button @click="render()">send</Button>
     </div>
   </div>
-  
 </template>
 
 <style scoped>
-
-.container {
-  display: flex;
-  flex-direction: row;
-  width: 100vw;
-  height: 100vh;
-}
 .image_box {
   border: 2px solid #ffffff;
 }
 .main{
-  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  width: 100%;
 }
 .sidebar{
   height: 100vh;
-  width: 30vw;  
-  text-align: left;
+  width: 25rem;
+  text-align: left; 
   background-color: #2b2b2b;
   padding: 0 1rem;
 }

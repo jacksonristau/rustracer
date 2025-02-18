@@ -28,3 +28,11 @@ export let scene = {
     "frustum_width":2.0,
     "parallel":false
 };
+
+/*
+{
+    center: {x:0.0, y:0.0, z:-8.0, w:1.0},
+    radius: 2.0,
+    material_index: 0
+}
+*/
