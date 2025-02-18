@@ -1,10 +1,8 @@
-use rustracer_core::{raytracer, scene::Scene, graphics::vec_writer::VecWriter};
+use rustracer_core::{graphics::vec_writer::VecWriter, raytracer, scene::Scene};
 use std::sync::Arc;
 
-pub const FILENAME: &str = "../images/output.jpg";
-
 pub fn handle_render(scene: Scene) -> Vec<u8> {
-    let raytracer = Arc::new(raytracer::Raytracer::new(scene));
+    let raytracer = Arc::new(raytracer::Raytracer::new(normalize_colors(scene)));
     let px_width = raytracer.scene.resolution.0;
     let px_height = raytracer.scene.resolution.1;
 
@@ -23,4 +21,12 @@ pub fn handle_render(scene: Scene) -> Vec<u8> {
         encoder.encode(&image, px_width as u16, px_height as u16, jpeg_encoder::ColorType::Rgb).unwrap();
     }
     jpeg_bytes
+}
+
+fn normalize_colors(mut scene : Scene) -> Scene {
+    for material in &mut scene.materials {
+        material.diffuse = material.diffuse.normalize();
+        material.specular = material.specular.normalize();
+    }
+    scene
 }

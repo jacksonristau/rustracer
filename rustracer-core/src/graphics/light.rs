@@ -1,5 +1,8 @@
+use serde::{Deserialize, Serialize};
+
 use crate::math::vector::Vector;
 
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Light {
     pub v : Vector,
     pub attenuation : (f64, f64, f64),

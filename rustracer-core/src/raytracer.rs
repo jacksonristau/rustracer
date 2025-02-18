@@ -1,3 +1,4 @@
+use std::f64::EPSILON;
 use std::sync::Arc;
 
 use crate::math::ray::Ray;
@@ -63,24 +64,91 @@ impl Raytracer {
         }
     }
 
+    pub fn depth_cue(&self, i : Color, view_distance : f64) -> Color{
+        let alpha_dc;
+        if view_distance <= self.scene.dist.0 {
+            alpha_dc = self.scene.alpha.1;
+        }
+        else if view_distance >= self.scene.dist.1 {
+            alpha_dc = self.scene.alpha.0;
+        }
+        else {
+            alpha_dc = self.scene.alpha.0 + (self.scene.alpha.1 - self.scene.alpha.0) * ((self.scene.dist.1 - view_distance) / (self.scene.dist.1 - self.scene.dist.0));
+        }
+        (i * alpha_dc) + (self.scene.dc * (1.0 -  alpha_dc))
+    }
+
     pub fn trace(&self, ray : Ray) -> Color {
         let mut output = self.scene.bkg_color;
         let mut min_t = f64::INFINITY;
-        for sphere in &self.scene.spheres {
+        let mut hit_index = 0;
+        let mut hit = false;
+        for (i, sphere) in self.scene.spheres.iter().enumerate() {
             let t = ray.intersect_sphere(&sphere);
-            if t > 0.0 {
+            if t > EPSILON {
                 if t < min_t {
                     min_t = t;
-                    output = self.shade( sphere.material_index);
+                    hit_index = i;
+                    hit = true;
                 }
             }
+        }
+        if hit {
+            let material_index = self.scene.spheres[hit_index].material_index;
+            let intersection = ray.get_point(min_t);
+            let mut n = intersection - self.scene.spheres[hit_index].center;
+            n.normalize();
+            output = self.shade(material_index, intersection, n, ray);
         }
         output
     }
 
-    pub fn shade(&self, m: usize) -> Color {
+    pub fn shade(&self, m: usize, x_p : Vector, normal : Vector, i_ray : Ray) -> Color {
         let material = self.scene.materials[m];
-        material.diffuse
+        let mut final_color = material.diffuse * material.k_a;
+        for light in &self.scene.lights {
+            let is_point = light.v.w == 1.0;
+            let mut s_flag = 1.0;
+
+            let mut l = if is_point {
+                light.v - x_p
+            } else {
+                -light.v
+            };
+            let d = x_p.distance(&light.v);
+            l.normalize();
+            let r =  Ray::new(x_p, l);
+
+            for sphere in &self.scene.spheres {
+                if sphere.material_index == m {
+                    continue;
+                }
+                let t = r.intersect_sphere(sphere);
+                let surface_alpha = material.alpha;
+                let is_between = if is_point {
+                    EPSILON < t && t < d
+                }
+                else {
+                    t > EPSILON
+                };
+                if is_between {
+                    s_flag = s_flag * (1.0 - surface_alpha);
+                }
+            }
+            let mut i = i_ray.d * -1.0;
+            let ndotl = normal.dot(&l);
+            if ndotl < 0.0 { continue; }
+            i.normalize();
+            let mut h = l + i;
+            h.normalize();
+            let mut ndoth = normal.dot(&h);
+            if ndoth < 0.0 { ndoth = 0.0; }
+            let diffuse = material.diffuse * ndotl * material.k_d;
+            let specular = material.specular * ndoth.powi(material.n_val) * material.k_s;
+            final_color = final_color +  ((diffuse + specular) * light.i * s_flag);
+        }
+        final_color = self.depth_cue(final_color, self.scene.eye_pos.distance(&x_p));
+        final_color
     }
 
     pub fn trace_rays(self: Arc<Self>) -> Vec<Color>{

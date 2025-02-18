@@ -1,7 +1,7 @@
 use crate::graphics::color::Color;
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Clone, Copy)]
+#[derive(Serialize, Deserialize, Clone, Copy, Debug)]
 pub struct Material {
     pub diffuse : Color,
     pub specular : Color,

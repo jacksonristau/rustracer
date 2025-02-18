@@ -2,12 +2,20 @@
     "materials":[
         {
             "diffuse":{"r":1.0,"g":0.0,"b":0.0},
-            "specular":{"r":0.0,"g":0.0,"b":0.0},
-            "k_a":0.0,"k_d":0.0,
-            "k_s":0.0,
-            "alpha":0.0,
+            "specular":{"r":1.0,"g":1.0,"b":1.0},
+            "k_a":0.2,"k_d":0.6,"k_s":0.2,
+            "alpha":1.0,
             "index_of_refraction":0.0,
-            "n_val":0,
+            "n_val": 10,
+            "texture":null
+        },
+        {
+            "diffuse":{"r":0.0,"g":1.0,"b":0.0},
+            "specular":{"r":1.0,"g":1.0,"b":1.0},
+            "k_a":0.2,"k_d":0.6,"k_s":0.2,
+            "alpha":1.0,
+            "index_of_refraction":0.0,
+            "n_val": 10,
             "texture":null
         }
     ],
@@ -16,10 +24,22 @@
             "center":{"x":0.0,"y":0.0,"z":-8.0,"w":1.0},
             "radius":2.0,
             "material_index":0
+        },
+        {
+            "center":{"x":0.0,"y":-8.0,"z":-8.0,"w":1.0},
+            "radius":4.0,
+            "material_index":1
+        }
+    ],
+    "lights": [
+        {
+            "v": {"x":0.0,"y":-3.0,"z":-8.0,"w":1.0},
+            "attenuation": [1.0, 0.0, 0.0],
+            "i": 1.0
         }
     ],
     "eye_pos":{
-        "x":0.0,"y":0.0,"z":0.0,"w":1.0
+        "x":0.0,"y":0.0,"z":10.0,"w":1.0
     },
     "view_dir":{
         "x":0.0,"y":0.0,"z":-1.0,"w":0.0
@@ -33,5 +53,8 @@
         "r":0.2,"g":0.2,"b":0.2
     },
     "frustum_width":2.0,
-    "parallel":false
+    "parallel":false,
+    "dc": {"r":0.2,"g":0.2,"b":0.2},
+    "alpha": [0.0, 1.0],
+    "dist": [1, 300]
 }

@@ -1,6 +1,5 @@
 mod render;
 
-use async_std::io::{Cursor, ReadExt};
 use tide::{Body, Request, Response};
 use femme;
 use rustracer_core::scene::Scene;
@@ -21,6 +20,7 @@ async fn main() -> tide::Result<()> {
 
 async fn render(mut req: Request<()>) -> tide::Result {
     let scene: Scene = req.body_json().await?;
+    println!("Rendering scene: {:?}", scene);
     let image = render::handle_render(scene);
     let mut response = Response::new(200);
     response.set_body(Body::from_bytes(image));

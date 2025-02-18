@@ -33,6 +33,10 @@ impl Color {
         let b = (self.b * 255.0) as u8;
         (r, g, b)
     }
+
+    pub fn normalize(&self) -> Self {
+        Self::new(self.r / 255.0, self.g / 255.0, self.b / 255.0)
+    }
 }
 
 impl Add for Color {

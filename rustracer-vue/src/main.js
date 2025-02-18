@@ -7,6 +7,8 @@ import Button from "primevue/button";
 import Image from "primevue/image";
 import Card from 'primevue/card';
 import InputNumber from 'primevue/inputnumber';
+import ColorPicker from 'primevue/colorpicker';
+
 
 
 const app = createApp(App);
@@ -20,5 +22,6 @@ app.component('button', Button);
 app.component('Image', Image);
 app.component('Card', Card);
 app.component('InputNumber', InputNumber);
+app.component('ColorPicker', ColorPicker);
 
 app.mount('#app');
