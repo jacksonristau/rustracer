@@ -1,14 +1,22 @@
 <script setup>
-  import { ref } from 'vue'
+  import { ref, onMounted } from 'vue'
   import { scene } from './assets/default_scene'
   import ObjectList from './components/ObjectList.vue';
   import SceneEditor from './components/SceneEditor.vue';
 
   const image_url = ref("");
+  const clear_scene = ref(false);
+  let fetching = false;
 
-  scene['spheres'] = [];
+  onMounted(async () => {
+    await render();
+  });
 
   async function render() {
+    if (fetching) {
+      return;
+    }
+    fetching = true;
     const request = new Request("/api/render", {
       method: "POST",
       headers: {
@@ -20,42 +28,47 @@
     const response = await fetch(request);
     const image = await response.blob();
     image_url.value = URL.createObjectURL(image);
+    fetching = false;
   }
 
   async function update_config(spheres, lights, materials){
     scene['spheres'] = spheres;
     scene['lights'] = lights;
     scene['materials'] = materials;
+    clear_scene.value = false;
     await render();
   }
 
-  async function update_scene(background_color){
+  async function update_scene(bkg_color, hfov){
     let norm_color = {
-        "r": background_color.r / 255,
-        "g": background_color.g / 255,
-        "b": background_color.b / 255,
+        "r": bkg_color.r / 255,
+        "g": bkg_color.g / 255,
+        "b": bkg_color.b / 255,
     }
     scene['bkg_color'] = norm_color;
-    await render();
+    scene['hfov'] = hfov;
+    clear_scene.value = false;
+    setTimeout(await render(), 250);
   }
-
+  function clear() {
+    console.log("clearing...")
+    clear_scene.value = true;
+  }
 </script>
 
 <template>
   <div class="sidebar">
     <h1 class="mb-2 text-center">objects</h1>
-    <ObjectList @updated="update_config" />
+    <ObjectList @updated="update_config" :clear_scene />
   </div>
   <div class="main">
     <h1 class="mb-auto">raytracer</h1>
     <Image class="border-2 border-solid mb-auto" :src="image_url" />
-    <!-- <div class="footer">
-      <Button @click="render()">send</Button>
-    </div> -->
   </div>
   <div class="sidebar">
     <h1 class="mb-2 text-center">camera</h1>
-    <SceneEditor @updatedScene="update_scene"/>
+    <SceneEditor @updated="update_scene" :clear_scene />
+    <Button label="reset scene" @click="clear()" class="mt-2 w-full" />
   </div>
 </template>
 

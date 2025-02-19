@@ -9,8 +9,6 @@ import Card from 'primevue/card';
 import InputNumber from 'primevue/inputnumber';
 import ColorPicker from 'primevue/colorpicker';
 
-
-
 const app = createApp(App);
 
 app.use(PrimeVue, {
@@ -18,7 +16,7 @@ app.use(PrimeVue, {
         preset: Aura
     }
 });
-app.component('button', Button);
+app.component('Button', Button);
 app.component('Image', Image);
 app.component('Card', Card);
 app.component('InputNumber', InputNumber);

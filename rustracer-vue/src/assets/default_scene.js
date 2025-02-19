@@ -1,4 +1,7 @@
 export let scene = {
+    "spheres":[],
+    "materials":[],
+    "lights":[],
     "eye_pos":{
         "x":0.0,"y":0.0,"z":0.0,"w":1.0
     },
@@ -8,7 +11,7 @@ export let scene = {
     "up_dir":{
         "x":0.0,"y":1.0,"z":0.0,"w":0.0
     },
-    "hfov":45.0,
+    "hfov":60.0,
     "resolution":[1000,800],
     "bkg_color":{
         "r":0.2,"g":0.2,"b":0.2

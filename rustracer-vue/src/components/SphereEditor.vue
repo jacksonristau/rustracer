@@ -1,48 +1,62 @@
 <script setup>
   import { ref, defineProps, defineEmits, computed } from 'vue'
   const props = defineProps(['sphere', 'material', 'index']);
-  const emit = defineEmits(['updated']);
+  const emit = defineEmits(['updated', 'deleted']);
   const sphere = ref(props.sphere);
   const material = ref(props.material);
   const step = ref(1)
 
+  function delete_sphere() {
+    emit('deleted', props.index);
+  } 
+  const diffuse = computed(()=>{
+    return `rgb(${material.value.diffuse.r}, ${material.value.diffuse.g}, ${material.value.diffuse.b})`
+  })
+  const specular = computed(()=>{
+    return `rgb(${material.value.specular.r}, ${material.value.specular.g}, ${material.value.specular.b})`
+  })
 </script>
 
 <template>
   <Card>
-    <template #title><h3 class="font-bold text-2xl">sphere</h3></template>
+    <template #title>
+      <div class="flex justify-between mt-1">
+        <h3 class="font-bold text-2xl">sphere</h3>
+        <Button @click="delete_sphere" label="Delete" severity="danger" outlined />
+      </div>
+    </template>
     <template #content>
       <h3 class="pb-2 font-bold">position</h3>
       <div class="flex flex-wrap p-0 gap-2">
         <div>
           <label for="x-pos"> x: </label>
-          <InputNumber @value-change="$emit('updated', sphere, material, index)" size="small" style="width: 3rem" v-model="sphere.center.x" :max-fraction-digits="2" input-id="x-pos" :step fluid/>
+          <InputNumber @value-change="$emit('updated', sphere, material, index)" showButtons size="small" style="width: 5rem" v-model="sphere.center.x" :max-fraction-digits="2" input-id="x-pos" :step fluid/>
         </div>
         <div >
           <label for="y-pos" class=""> y: </label>
-          <InputNumber @value-change="$emit('updated', sphere, material, index)" size="small" style="width: 3rem" v-model="sphere.center.y" :max-fraction-digits="2" input-id="y-pos" :step fluid/>
+          <InputNumber @value-change="$emit('updated', sphere, material, index)" showButtons size="small" style="width: 5rem" v-model="sphere.center.y" :max-fraction-digits="2" input-id="y-pos" :step fluid/>
         </div>
         <div>
           <label for="z-pos"> z: </label>
-          <InputNumber @value-change="$emit('updated', sphere, material, index)" size="small" style="width: 3rem" v-model="sphere.center.z" :max-fraction-digits="2" input-id="z-pos" :step fluid/>
+          <InputNumber @value-change="$emit('updated', sphere, material, index)" showButtons size="small" style="width: 5rem" v-model="sphere.center.z" :max-fraction-digits="2" input-id="z-pos" :step fluid/>
         </div>
       </div>
       <div class="flex flex-wrap mt-2">
         <div class="flex-auto">
           <label for="radius"> radius: </label>
-          <InputNumber @value-change="$emit('updated', sphere, material, index)" size="small" style="width: 6rem" v-model="sphere.radius" :max-fraction-digits="2" input-id="radius" :step fluid/>
+          <InputNumber @value-change="$emit('updated', sphere, material, index)" showButtons size="small" style="width: 6rem" v-model="sphere.radius" :max-fraction-digits="2" input-id="radius" :step fluid/>
         </div>
       </div>
       <h3 class="mt-4 font-bold">material</h3>
       <div class="flex flex-wrap mt-2">
         <label for="color" class="mr-2"> diffuse: </label> 
         <ColorPicker @value-change="$emit('updated', sphere, material, index)" input-id="color" v-model="material.diffuse" format="rgb"></ColorPicker>
-        <p class="ml-2">{{ material.diffuse }}</p>
+        <p class="ml-2">{{ diffuse }}</p>
       </div>
       <div class="flex flex-wrap mt-2">
         <label for="color" class="mr-2"> specular: </label> 
         <ColorPicker @value-change="$emit('updated', sphere, material, index)" input-id="color" v-model="material.specular" format="rgb"></ColorPicker>
-        <p class="ml-2">{{ material.specular }}</p>
+        <p class="ml-2"> {{ specular }}</p>
       </div>
       <div class="flex flex-wrap p-0 gap-2 mt-2">
         <div>

@@ -1,6 +1,5 @@
 <script setup>
-  import { ref, defineEmits } from 'vue'
-  import { material } from '../assets/default_material';
+  import { ref, defineEmits, defineProps, watch } from 'vue'
   import SphereEditor from './SphereEditor.vue';
   import LightEditor from './LightEditor.vue';
 
@@ -9,7 +8,18 @@
   const materials = ref([]);
   var num_objects = 0;
 
+  const props = defineProps(['clear_scene']);
   const emit = defineEmits(['updated']);
+
+  watch(() => props.clear_scene, (newVal) => {
+    if (newVal) {
+      spheres.value = [];
+      lights.value = [];
+      materials.value = [];
+      num_objects = 0;
+      emit('updated', spheres.value, lights.value, materials.value);
+    }
+  });
 
   function add_sphere() {
     spheres.value.push({
@@ -49,12 +59,21 @@
     lights.value[index] = light;
     emit('updated', spheres.value, lights.value, materials.value);
   }
+
+  function delete_light(index) {
+    lights.value.splice(index, 1);
+    emit('updated', spheres.value, lights.value, materials.value);
+  }
+  function delete_sphere(index) {
+    spheres.value.splice(index, 1);
+    emit('updated', spheres.value, lights.value, materials.value);
+  }
 </script>
 
 <template>
   <div class="object_list gap-4">
-    <SphereEditor @updated="update_spheres" v-for="(s, i) in spheres" :key="i" :sphere="s" :index="i" :material="materials[i]"/>
-    <LightEditor @updated="update_lights" v-for="(l, i) in lights" :key="i" :light="l" :index="i"/>
+    <SphereEditor @deleted="delete_sphere" @updated="update_spheres" v-for="(s, i) in spheres" :key="i" :sphere="s" :index="i" :material="materials[i]"/>
+    <LightEditor @deleted="delete_light" @updated="update_lights" v-for="(l, i) in lights" :key="i" :light="l" :index="i"/>
     <div class="flex gap-4">
       <Button @click="add_sphere()" class="mt-2 mb-4 grow">add sphere</Button>
       <Button @click="add_light()" class="mt-2 mb-4 grow">add light</Button>
