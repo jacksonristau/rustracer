@@ -1,4 +1,4 @@
-use std::f64::EPSILON;
+use std::f32::EPSILON;
 use std::sync::Arc;
 
 use crate::math::ray::Ray;
@@ -18,8 +18,8 @@ pub struct Raytracer {
     pub lr: Vector,
     pub dh: Vector,
     pub dv: Vector,
-    pub width: f64,
-    pub height: f64,
+    pub width: f32,
+    pub height: f32,
 }
 
 impl Raytracer {
@@ -31,7 +31,7 @@ impl Raytracer {
         u.normalize();
         let v = u.cross(&scene.view_dir);
 
-        let aspect_ratio = scene.resolution.0 as f64 / scene.resolution.1 as f64;
+        let aspect_ratio = scene.resolution.0 as f32 / scene.resolution.1 as f32;
         let d = 1.0;
 
         let width = if scene.parallel {
@@ -46,8 +46,8 @@ impl Raytracer {
         let ll = (scene.eye_pos + scene.view_dir * d) - (u * (width / 2.0)) - (v * (height / 2.0));
         let lr = (scene.eye_pos + scene.view_dir * d) + (u * (width / 2.0)) - (v * (height / 2.0));
 
-        let dh = (ur - ul) * (1.0 / (scene.resolution.0 as f64 - 1.0));
-        let dv = (ll - ul) * (1.0 / (scene.resolution.1 as f64 - 1.0));
+        let dh = (ur - ul) * (1.0 / (scene.resolution.0 as f32 - 1.0));
+        let dv = (ll - ul) * (1.0 / (scene.resolution.1 as f32 - 1.0));
 
         Self {
             scene: scene,
@@ -64,7 +64,7 @@ impl Raytracer {
         }
     }
 
-    pub fn depth_cue(&self, i : Color, view_distance : f64) -> Color{
+    pub fn depth_cue(&self, i : Color, view_distance : f32) -> Color{
         let alpha_dc;
         if view_distance <= self.scene.dist.0 {
             alpha_dc = self.scene.alpha.1;
@@ -75,29 +75,46 @@ impl Raytracer {
         else {
             alpha_dc = self.scene.alpha.0 + (self.scene.alpha.1 - self.scene.alpha.0) * ((self.scene.dist.1 - view_distance) / (self.scene.dist.1 - self.scene.dist.0));
         }
-        (i * alpha_dc) + (self.scene.dc * (1.0 -  alpha_dc))
+        (i * alpha_dc) + (self.scene.dc * (1.0 - alpha_dc))
     }
 
     pub fn trace(&self, ray : Ray) -> Color {
         let mut output = self.scene.bkg_color;
-        let mut min_t = f64::INFINITY;
+        let mut min_t = f32::INFINITY;
         let mut hit_index = 0;
-        let mut hit = false;
+        let mut hit = (false, "tri");
         for (i, sphere) in self.scene.spheres.iter().enumerate() {
             let t = ray.intersect_sphere(&sphere);
             if t > EPSILON {
                 if t < min_t {
                     min_t = t;
                     hit_index = i;
-                    hit = true;
+                    hit.0 = true;
+                    hit.1 = "sphere";
                 }
             }
         }
-        if hit {
-            let material_index = self.scene.spheres[hit_index].material_index;
+        let mut bary = [0.0, 0.0, 0.0];
+        for i in 0..self.scene.obj.indices.len() / 3 {
+            let t = ray.intersect_triangle(self.scene.get_triangle(i), Some(&mut bary));
+            if t > EPSILON {
+                if t < min_t {
+                    min_t = t;
+                    hit_index = i;
+                    hit.0 = true;
+                    hit.1 = "tri";
+                }
+            }
+        }
+        if hit.0 {
+            let mut material_index : usize = 0;
             let intersection = ray.get_point(min_t);
-            let mut n = intersection - self.scene.spheres[hit_index].center;
-            n.normalize();
+            let mut n : Vector = Vector::new(0.0, 0.0, 0.0, 0.0);
+            if hit.1 == "sphere" {
+                n = intersection - self.scene.spheres[hit_index].center;
+                material_index = self.scene.spheres[hit_index].material_index;
+                n.normalize();
+            }
             output = self.shade(material_index, intersection, n, ray);
         }
         output
@@ -165,9 +182,9 @@ impl Raytracer {
                     // this may need to be used
                     let _index = (i * px_width + j) as usize;
                     let color = if is_parallel {
-                        me.trace(Ray::new(me.ul + (me.dh * j as f64) + (me.dv * i as f64), me.scene.view_dir))
+                        me.trace(Ray::new(me.ul + (me.dh * j as f32) + (me.dv * i as f32), me.scene.view_dir))
                     } else {
-                        me.trace(Ray::new(me.scene.eye_pos, me.ul + (me.dh * j as f64) + (me.dv * i as f64) - me.scene.eye_pos))
+                        me.trace(Ray::new(me.scene.eye_pos, me.ul + (me.dh * j as f32) + (me.dv * i as f32) - me.scene.eye_pos))
                     };
                     color
                 })

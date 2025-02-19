@@ -5,13 +5,13 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Copy, Clone, Deserialize, Serialize)]
 pub struct Color {
-    pub r: f64,
-    pub g: f64,
-    pub b: f64,
+    pub r: f32,
+    pub g: f32,
+    pub b: f32,
 }
 
 impl Color {
-    pub fn new(r: f64, g: f64, b: f64) -> Self {
+    pub fn new(r: f32, g: f32, b: f32) -> Self {
         Color { r: r, g: g, b: b }
     }
 
@@ -51,10 +51,10 @@ impl Add for Color {
     }
 }
 
-impl Mul<f64> for Color {
+impl Mul<f32> for Color {
     type Output = Self;
 
-    fn mul(self, s : f64) -> Self {
+    fn mul(self, s : f32) -> Self {
         Self {
             r: self.r * s,
             g: self.g * s,
@@ -65,15 +65,15 @@ impl Mul<f64> for Color {
 
 impl PartialEq for Color {
     fn eq(&self, other: &Color) -> bool {
-        f64::abs(self.r - other.r) < f64::EPSILON &&
-        f64::abs(self.g - other.g) < f64::EPSILON &&
-        f64::abs(self.b - other.b) < f64::EPSILON
+        f32::abs(self.r - other.r) < f32::EPSILON &&
+        f32::abs(self.g - other.g) < f32::EPSILON &&
+        f32::abs(self.b - other.b) < f32::EPSILON
     }
 
     fn ne(&self, other: &Color) -> bool {
-        f64::abs(self.r - other.r) > f64::EPSILON ||
-        f64::abs(self.g - other.g) > f64::EPSILON ||
-        f64::abs(self.b - other.b) > f64::EPSILON
+        f32::abs(self.r - other.r) > f32::EPSILON ||
+        f32::abs(self.g - other.g) > f32::EPSILON ||
+        f32::abs(self.b - other.b) > f32::EPSILON
     }
 }
 

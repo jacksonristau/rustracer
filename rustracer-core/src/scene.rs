@@ -3,38 +3,45 @@ use std::{fs::File, io::Read, fmt};
 //use crate::graphics::texture::Texture;
 use crate::graphics::{light::Light, material::Material};
 use crate::math::sphere::Sphere;
+use crate::math::triangle::Triangle;
 use crate::math::vector::Vector;
 use crate::graphics::color::Color;
 use serde::{Deserialize, Serialize};
+use wavefront::Vertex;
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct Scene {
+pub struct Scene{
     pub materials : Vec<Material>,
     pub spheres : Vec<Sphere>,
     pub lights : Vec<Light>,
+    pub obj_file : String,
+    #[serde(skip)]
+    pub triangles : Vec<Triangle>,
 
     pub eye_pos : Vector,
     pub view_dir : Vector,
     pub up_dir : Vector,
 
-    pub hfov : f64,
+    pub hfov : f32,
 
     // (width, height)
     pub resolution : (i32, i32),
     pub bkg_color : Color,
-    pub frustum_width : f64,
+    pub frustum_width : f32,
     pub parallel : bool,
     pub dc: Color,
-    pub alpha : (f64, f64),
-    pub dist : (f64, f64),
+    pub alpha : (f32, f32),
+    pub dist : (f32, f32),
 }
 
 impl Scene {
-    pub fn new(materials : Vec<Material>, spheres : Vec<Sphere>, lights : Vec<Light>, eye_pos : Vector, view_dir : Vector, up_dir : Vector, hfov : f64, resolution : (i32, i32), alpha : (f64, f64), dist : (f64, f64), bkg_color : Color, frustum_width : f64, depth_cue : Color, parallel : bool) -> Self {
+    pub fn new(materials : Vec<Material>, spheres : Vec<Sphere>, lights : Vec<Light>, triangles : Vec<Triangle>, eye_pos : Vector, view_dir : Vector, up_dir : Vector, hfov : f32, resolution : (i32, i32), alpha : (f32, f32), dist : (f32, f32), bkg_color : Color, frustum_width : f32, depth_cue : Color, parallel : bool, obj_file : String) -> Self {
         Scene {
             materials : materials,
             spheres : spheres,
             lights : lights,
+            triangles : triangles,
+            obj_file: obj_file,
             eye_pos : eye_pos,
             view_dir : view_dir,
             up_dir : up_dir,
@@ -76,6 +83,7 @@ impl Scene {
         let serialized: String = serde_json::to_string(&self).unwrap();
         std::fs::write(filename, serialized).expect("Unable to write file");
     }
+
 }
 
 impl fmt::Display for Scene {

@@ -4,8 +4,18 @@ use std::sync::Arc;
 use rustracer_core::raytracer;
 use rustracer_core::scene::Scene;
 use jpeg_encoder;
+use wavefront::Obj;
 
 fn main() {
+    let args: Vec<String> = env::args().collect();
+    let filename = &args[1];
+    let model = Obj::from_file(filename).unwrap();
+    for v in model.vertices() {
+        println!("{:?}", v);
+    }
+}
+
+fn testmain() {
     let args: Vec<String> = env::args().collect();
     if args.len() != 2 {
         eprintln!("Usage: {} <scene file>", args[0]);

@@ -1,6 +1,7 @@
+use super::triangle::Triangle;
 use super::vector::Vector;
 use super::sphere::Sphere;
-use std::f64;
+use std::f32;
 use std::fmt;
 use std::cmp::PartialEq;
 
@@ -16,22 +17,22 @@ impl Ray {
         Ray { o: o, d: d }
     }
 
-    pub fn get_point(&self, t: f64) -> Vector{
+    pub fn get_point(&self, t: f32) -> Vector{
         (self.d * t) + self.o
     }
 
-    pub fn intersect_sphere(&self, sphere : &Sphere) -> f64 {
+    pub fn intersect_sphere(&self, sphere : &Sphere) -> f32 {
         let b = 2.0 * 
             (self.d.x * (self.o.x - sphere.center.x) +
             self.d.y * (self.o.y - sphere.center.y) +
             self.d.z * (self.o.z - sphere.center.z));
         let c = 
-            f64::powf(self.o.x - sphere.center.x, 2.0) +
-            f64::powf(self.o.y - sphere.center.y, 2.0) +
-            f64::powf(self.o.z - sphere.center.z, 2.0) -
-            f64::powf(sphere.radius, 2.0);
+            f32::powf(self.o.x - sphere.center.x, 2.0) +
+            f32::powf(self.o.y - sphere.center.y, 2.0) +
+            f32::powf(self.o.z - sphere.center.z, 2.0) -
+            f32::powf(sphere.radius, 2.0);
         
-        let discrim = f64::powf(b, 2.0) - (4.0 * c);
+        let discrim = f32::powf(b, 2.0) - (4.0 * c);
         if discrim < 0.0 {
             -1.0
         }
@@ -39,27 +40,27 @@ impl Ray {
             -b / 2.0
         }
         else {
-            let t1 = (-b + f64::sqrt(discrim)) / 2.0;
-            let t2 = (-b - f64::sqrt(discrim)) / 2.0;
+            let t1 = (-b + f32::sqrt(discrim)) / 2.0;
+            let t2 = (-b - f32::sqrt(discrim)) / 2.0;
             
-            if t1 < f64::EPSILON && t2 > f64::EPSILON {
+            if t1 < f32::EPSILON && t2 > f32::EPSILON {
                 t2
             }
-            else if t1 > f64::EPSILON && t2 < f64::EPSILON {
+            else if t1 > f32::EPSILON && t2 < f32::EPSILON {
                 t1
             }
-            else if t1 < f64::EPSILON && t2 <= f64::EPSILON {
+            else if t1 < f32::EPSILON && t2 <= f32::EPSILON {
                 -1.0
             }
             else {
-                f64::min(t1, t2)
+                f32::min(t1, t2)
             }
         }
     }
 
-    pub fn intersect_plane(&self, normal: &Vector, point: &Vector) -> f64 {
+    pub fn intersect_plane(&self, normal: &Vector, point: &Vector) -> f32 {
         let denom = normal.dot(&self.d);
-        if denom > -f64::EPSILON && denom < f64::EPSILON {
+        if denom > -f32::EPSILON && denom < f32::EPSILON {
             -1.0
         }
         else {
@@ -68,13 +69,12 @@ impl Ray {
         }
     }
 
-    pub fn intersect_triangle(&self, vertices: Vec<Vector>, coords: Option<&mut [f64; 3]>) -> f64 {
-        let e1 = vertices[1] - vertices[0];
-        let e2 = vertices[2] - vertices[0];
+    pub fn intersect_triangle(&self, triangle : Triangle, coords: Option<&mut [f32; 3]>) -> f32 {
+        let e1 = triangle.position.1 - triangle.position.0;
+        let e2 = triangle.position.2 - triangle.position.0;
 
         let n = e1.cross(&e2);
-
-        let t = self.intersect_plane(&n, &vertices[0]);
+        let t = self.intersect_plane(&n, &triangle.position.0);
         if t < 0.0 {
             -1.0
         }
@@ -83,12 +83,12 @@ impl Ray {
             let d12 = e1.dot(&e2);
             let d22 = e2.dot(&e2);
             let det = (d11 * d22) - (d12 * d12);
-            if det > -f64::EPSILON && det < f64::EPSILON {
+            if det > -f32::EPSILON && det < f32::EPSILON {
                 -1.0
             }
             else {
                 let p = self.get_point(t);
-                let ep = p - vertices[0];
+                let ep = p - triangle.position.0;
                 let dp1 = ep.dot(&e1);
                 let dp2 = ep.dot(&e2);
 
@@ -120,18 +120,18 @@ impl Ray {
         return r;
     }
 
-    pub fn refract(&self, n: &Vector, n1: f64, n2: f64) -> Vector {
+    pub fn refract(&self, n: &Vector, n1: f32, n2: f32) -> Vector {
         let i = -self.d;
         let snell = n1 / n2;
         let ndoti = n.dot(&i);
         let b = ((*n * ndoti) - i) * snell;
-        let discrim = 1.0 - f64::powf(snell, 2.0) * (1.0 - f64::powf(ndoti, 2.0));
+        let discrim = 1.0 - f32::powf(snell, 2.0) * (1.0 - f32::powf(ndoti, 2.0));
 
         if discrim < 0.0 {
             return Vector::new(0.0,0.0,0.0,0.0)
         }
         else {
-            let a = -*n * f64::sqrt(discrim);
+            let a = -*n * f32::sqrt(discrim);
             a + b
         }
     }
@@ -202,13 +202,14 @@ fn test_ray_intersect_triangle() {
     let origin = Vector::new(0.0, 0.0, 0.0, 1.0);
     let direction = Vector::new(0.0, 0.0, 1.0, 0.0);
     let ray = Ray::new(origin, direction);
-    let vertices = vec![
+    let vertices = (
         Vector::new(0.0, 1.0, 5.0, 1.0),
         Vector::new(-1.0, -1.0, 5.0, 1.0),
         Vector::new(1.0, -1.0, 5.0, 1.0),
-    ];
+    );
+    let triangle = Triangle::new(vertices.0, vertices.1, vertices.2, Vector::new(0.0, 0.0, 1.0, 0.0), Vector::new(0.0, 0.0, 1.0, 0.0), Vector::new(0.0, 0.0, 1.0, 0.0));
     let mut coords = [0.0; 3];
-    let t = ray.intersect_triangle(vertices, Some(&mut coords));
+    let t = ray.intersect_triangle(triangle, Some(&mut coords));
     assert!(t > 0.0);
     assert!(coords.iter().all(|&c| c >= 0.0 && c <= 1.0));
 }

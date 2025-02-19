@@ -5,17 +5,17 @@ use serde::{Deserialize, Serialize};
 pub struct Material {
     pub diffuse : Color,
     pub specular : Color,
-    pub k_a : f64,
-    pub k_d : f64,
-    pub k_s : f64,
-    pub alpha : f64,
-    pub index_of_refraction : f64,
+    pub k_a : f32,
+    pub k_d : f32,
+    pub k_s : f32,
+    pub alpha : f32,
+    pub index_of_refraction : f32,
     pub n_val : i32,
     pub texture : Option<i32>
 }
 
 impl Material {
-    pub fn new(diffuse : Color, specular : Color, k_a : f64, k_d : f64, k_s : f64, alpha : f64, index_of_refraction : f64, n_val : i32, texture : Option<i32>) -> Self {
+    pub fn new(diffuse : Color, specular : Color, k_a : f32, k_d : f32, k_s : f32, alpha : f32, index_of_refraction : f32, n_val : i32, texture : Option<i32>) -> Self {
         Material {
             diffuse : diffuse,
             specular : specular,

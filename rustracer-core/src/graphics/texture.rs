@@ -5,7 +5,7 @@ use std::fs::read;
 use crate::graphics::color::Color;
 
 /*
-const GAUSSIAN_KERNEL: [f64; 9] = [
+const GAUSSIAN_KERNEL: [f32; 9] = [
     1.0/16.0, 1.0/8.0, 1.0/16.0,
     1.0/8.0, 1.0/4.0, 1.0/8.0,
     1.0/16.0, 1.0/8.0, 1.0/16.0
@@ -28,7 +28,7 @@ impl Texture {
         // convert Vec<u8> to Vec<Color>
         let color_data = data
             .chunks(3)
-            .map(|c| Color::new(c[0] as f64 / 255.0, c[1] as f64 / 255.0, c[2] as f64 / 255.0))
+            .map(|c| Color::new(c[0] as f32 / 255.0, c[1] as f32 / 255.0, c[2] as f32 / 255.0))
             .collect::<Vec<Color>>();
         Texture {
             width : image_info.width as i32,
@@ -38,7 +38,7 @@ impl Texture {
         }
     }
 
-    pub fn get_pixel(&self, mut u : f64, mut v : f64) -> Color {
+    pub fn get_pixel(&self, mut u : f32, mut v : f32) -> Color {
         let x;
         let y;
 
@@ -49,13 +49,13 @@ impl Texture {
             v = v.fract();
         }
 
-        y = v * (self.height - 1) as f64;
-        x = u * (self.width - 1) as f64;
-        if y * self.width as f64 + x >= self.data.len() as f64 {
+        y = v * (self.height - 1) as f32;
+        x = u * (self.width - 1) as f32;
+        if y * self.width as f32 + x >= self.data.len() as f32 {
             panic!("invalid texture coordinates");
         }
 
-        self.data[(y * self.width as f64 + x) as usize]
+        self.data[(y * self.width as f32 + x) as usize]
     }
 
     pub fn write_to_file(&self, filename : &str) {
@@ -89,7 +89,7 @@ impl Texture {
         }
     }
 
-    fn apply_kernel(&self, kernel: &Vec<f64>, x: i32, y: i32, kernel_size: usize) -> Color {
+    fn apply_kernel(&self, kernel: &Vec<f32>, x: i32, y: i32, kernel_size: usize) -> Color {
         let mut color = Color::new(0.0, 0.0, 0.0);
         let half_k = (kernel_size / 2) as i32;
         let mut sum_r = 0.0;
@@ -115,7 +115,7 @@ impl Texture {
         color
     }
 
-    pub fn filter(&self, kernel : &Vec<f64>, kernel_size: usize) -> Self {
+    pub fn filter(&self, kernel : &Vec<f32>, kernel_size: usize) -> Self {
         let mut filtered_data = Vec::new();
         let padded_texture = self.pad();
         println!("Applying filter to texture: {}", self.filename);

@@ -5,12 +5,12 @@ use crate::math::vector::Vector;
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Light {
     pub v : Vector,
-    pub attenuation : (f64, f64, f64),
-    pub i : f64,
+    pub attenuation : (f32, f32, f32),
+    pub i : f32,
 }
 
 impl Light {
-    pub fn new(v : Vector, attenuation : (f64, f64, f64), i : f64) -> Self {
+    pub fn new(v : Vector, attenuation : (f32, f32, f32), i : f32) -> Self {
         Light {
             v,
             attenuation,
@@ -18,7 +18,7 @@ impl Light {
         }
     }
 
-    pub fn attenuate(&self, distance : f64) -> f64 {
+    pub fn attenuate(&self, distance : f32) -> f32 {
         self.i / (self.attenuation.0 + self.attenuation.1 * distance + self.attenuation.2 * distance * distance)
     }
 }

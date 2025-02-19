@@ -1,4 +1,4 @@
-use std::f64;
+use std::f32;
 use std::ops::{Add, Sub, Mul, Neg};
 use std::cmp::PartialEq;
 use std::fmt;
@@ -6,18 +6,18 @@ use::serde::{Deserialize, Serialize};
 
 #[derive(Copy, Clone, Deserialize, Serialize, Debug)]
 pub struct Vector {
-    pub x: f64,
-    pub y: f64,
-    pub z: f64,
-    pub w: f64
+    pub x: f32,
+    pub y: f32,
+    pub z: f32,
+    pub w: f32
 }
 
 impl Vector {
-    pub fn new(x: f64, y: f64, z: f64, w: f64) -> Self {
+    pub fn new(x: f32, y: f32, z: f32, w: f32) -> Self {
         Vector { x: x, y: y, z: z, w: w }
     }
 
-    pub fn dot(&self, other: &Vector) -> f64 {
+    pub fn dot(&self, other: &Vector) -> f32 {
         (self.x * other.x) + (self.y * other.y) + (self.z * other.z)
     }
 
@@ -30,8 +30,8 @@ impl Vector {
         }
     }
 
-    pub fn distance(&self, other: &Vector) -> f64 {
-        f64::sqrt(
+    pub fn distance(&self, other: &Vector) -> f32 {
+        f32::sqrt(
             (self.x - other.x) * (self.x - other.x) +
             (self.y - other.y) * (self.y - other.y) +
             (self.z - other.z) * (self.z - other.z)
@@ -39,14 +39,14 @@ impl Vector {
     }
 
     pub fn normalize(&mut self) {
-        let magnitude : f64 = 1.0 / f64::sqrt(self.x * self.x + self.y * self.y + self.z * self.z);
+        let magnitude : f32 = 1.0 / f32::sqrt(self.x * self.x + self.y * self.y + self.z * self.z);
         self.x *= magnitude;
         self.y *= magnitude;
         self.z *= magnitude;
     }
 
     pub fn is_normalized(&self) -> bool {
-        if f64::abs(self.x * self.x + self.y * self.y + self.z * self.z - 1.0) > f64::EPSILON {
+        if f32::abs(self.x * self.x + self.y * self.y + self.z * self.z - 1.0) > f32::EPSILON {
             false
         }
         else {
@@ -84,10 +84,10 @@ impl Sub for Vector {
     }
 }
 
-impl Mul<f64> for Vector {
+impl Mul<f32> for Vector {
     type Output = Self;
 
-    fn mul(self, scalar: f64) -> Self {
+    fn mul(self, scalar: f32) -> Self {
         Self {
             x: scalar * self.x,
             y: scalar * self.y,
@@ -129,10 +129,10 @@ impl Neg for Vector {
 
 impl PartialEq for Vector {
     fn eq(&self, other: &Self) -> bool {
-        f64::abs(self.x) - f64::abs(other.x) < f64::EPSILON &&
-        f64::abs(self.y) - f64::abs(other.y) < f64::EPSILON &&
-        f64::abs(self.z) - f64::abs(other.z) < f64::EPSILON &&
-        f64::abs(self.w) - f64::abs(other.w) < f64::EPSILON
+        f32::abs(self.x) - f32::abs(other.x) < f32::EPSILON &&
+        f32::abs(self.y) - f32::abs(other.y) < f32::EPSILON &&
+        f32::abs(self.z) - f32::abs(other.z) < f32::EPSILON &&
+        f32::abs(self.w) - f32::abs(other.w) < f32::EPSILON
     }
 }
 
@@ -213,16 +213,16 @@ fn distance_between_vectors() {
     let v1 = Vector::new(1.0, 2.0, 3.0, 1.0);
     let v2 = Vector::new(4.0, 5.0, 6.0, 1.0);
     let distance = v1.distance(&v2);
-    assert_eq!(distance, f64::sqrt(27.0));
+    assert_eq!(distance, f32::sqrt(27.0));
 }
 
 #[test]
 fn normalize_vector() {
     let mut v1 = Vector::new(3.0, 0.0, 4.0, 0.0);
     v1.normalize();
-    assert!((v1.x - 0.6).abs() < f64::EPSILON);
-    assert!((v1.y - 0.0).abs() < f64::EPSILON);
-    assert!((v1.z - 0.8).abs() < f64::EPSILON);
+    assert!((v1.x - 0.6).abs() < f32::EPSILON);
+    assert!((v1.y - 0.0).abs() < f32::EPSILON);
+    assert!((v1.z - 0.8).abs() < f32::EPSILON);
     assert_eq!(v1.w, 0.0);
 }
 
