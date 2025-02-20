@@ -55,6 +55,6 @@
     "frustum_width":2.0,
     "parallel":false,
     "dc": {"r":0.2,"g":0.2,"b":0.2},
-    "alpha": [0.0, 1.0],
-    "dist": [1, 300]
+    "alpha": [0.5, 1.0],
+    "dist": [1, 10]
 }

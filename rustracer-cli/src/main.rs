@@ -8,15 +8,6 @@ use wavefront::Obj;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    let filename = &args[1];
-    let model = Obj::from_file(filename).unwrap();
-    for v in model.vertices() {
-        println!("{:?}", v);
-    }
-}
-
-fn testmain() {
-    let args: Vec<String> = env::args().collect();
     if args.len() != 2 {
         eprintln!("Usage: {} <scene file>", args[0]);
         std::process::exit(1);
@@ -24,6 +15,7 @@ fn testmain() {
     let filename = &args[1];
 
     let scene: Scene = Scene::from_file(filename);
+    
 
     println!("Successfully loaded scene from {}", filename);
 

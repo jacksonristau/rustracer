@@ -24,7 +24,7 @@
   function add_sphere() {
     spheres.value.push({
       center: {x:0.0, y:0.0, z:-20.0, w:1.0},
-      radius: 2.0,
+      radius: 1.0,
       material_index: num_objects
     });
     materials.value.push({
