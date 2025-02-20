@@ -2,6 +2,7 @@ export let scene = {
     "spheres":[],
     "materials":[],
     "lights":[],
+    "obj_file": "",
     "eye_pos":{
         "x":0.0,"y":0.0,"z":0.0,"w":1.0
     },
@@ -20,7 +21,7 @@ export let scene = {
     "parallel":false,
     "dc": {"r":0.2,"g":0.2,"b":0.2},
     "alpha": [0.0, 1.0],
-    "dist": [1, 300]
+    "dist": [1, 30]
 };
 
 /*

@@ -69,7 +69,7 @@ impl Ray {
         }
     }
 
-    pub fn intersect_triangle(&self, triangle : Triangle, coords: Option<&mut [f32; 3]>) -> f32 {
+    pub fn intersect_triangle(&self, triangle : &Triangle, coords: Option<&mut [f32; 3]>) -> f32 {
         let e1 = triangle.position.1 - triangle.position.0;
         let e2 = triangle.position.2 - triangle.position.0;
 
@@ -207,9 +207,9 @@ fn test_ray_intersect_triangle() {
         Vector::new(-1.0, -1.0, 5.0, 1.0),
         Vector::new(1.0, -1.0, 5.0, 1.0),
     );
-    let triangle = Triangle::new(vertices.0, vertices.1, vertices.2, Vector::new(0.0, 0.0, 1.0, 0.0), Vector::new(0.0, 0.0, 1.0, 0.0), Vector::new(0.0, 0.0, 1.0, 0.0));
+    let triangle = Triangle::new(vertices.0, vertices.1, vertices.2, Vector::new(0.0, 0.0, 1.0, 0.0), Vector::new(0.0, 0.0, 1.0, 0.0), Vector::new(0.0, 0.0, 1.0, 0.0), [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0,0.0,0.0]);
     let mut coords = [0.0; 3];
-    let t = ray.intersect_triangle(triangle, Some(&mut coords));
+    let t = ray.intersect_triangle(&triangle, Some(&mut coords));
     assert!(t > 0.0);
     assert!(coords.iter().all(|&c| c >= 0.0 && c <= 1.0));
 }

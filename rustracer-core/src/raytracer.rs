@@ -95,8 +95,8 @@ impl Raytracer {
             }
         }
         let mut bary = [0.0, 0.0, 0.0];
-        for i in 0..self.scene.obj.indices.len() / 3 {
-            let t = ray.intersect_triangle(self.scene.get_triangle(i), Some(&mut bary));
+        for (i, triangle) in self.scene.triangles.iter().enumerate() {
+            let t = ray.intersect_triangle(triangle, Some(&mut bary));
             if t > EPSILON {
                 if t < min_t {
                     min_t = t;

@@ -17,6 +17,10 @@ impl Vector {
         Vector { x: x, y: y, z: z, w: w }
     }
 
+    pub fn from_vec(v : [f32; 3], w : f32) -> Self {
+        Vector { x: v[0], y: v[1], z: v[2], w: w }
+    }
+
     pub fn dot(&self, other: &Vector) -> f32 {
         (self.x * other.x) + (self.y * other.y) + (self.z * other.z)
     }

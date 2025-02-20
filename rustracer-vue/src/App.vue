@@ -39,7 +39,7 @@
     await render();
   }
 
-  async function update_scene(bkg_color, hfov){
+  async function update_scene(bkg_color, hfov, eye_pos, view_dir){
     let norm_color = {
         "r": bkg_color.r / 255,
         "g": bkg_color.g / 255,
@@ -47,8 +47,10 @@
     }
     scene['bkg_color'] = norm_color;
     scene['hfov'] = hfov;
+    scene['eye_pos'] = eye_pos;
+    scene['view_dir'] = view_dir;
     clear_scene.value = false;
-    setTimeout(await render(), 250);
+    setTimeout(await render(), 300);
   }
   function clear() {
     console.log("clearing...")
@@ -82,7 +84,7 @@
   }
   .sidebar{
     height: 100vh;
-    width: 40rem;
+    width: 45rem;
     text-align: left; 
     background-color: #2b2b2b;
     padding: 0 1rem;

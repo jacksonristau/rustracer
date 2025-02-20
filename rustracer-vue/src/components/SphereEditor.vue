@@ -26,19 +26,19 @@
       </div>
     </template>
     <template #content>
-      <h3 class="pb-2 font-bold">position</h3>
-      <div class="flex flex-wrap p-0 gap-2">
+      <h3 class="pb-1 font-bold">position</h3>
+      <div class="flex p-0 gap-2">
         <div>
           <label for="x-pos"> x: </label>
-          <InputNumber @value-change="$emit('updated', sphere, material, index)" showButtons size="small" style="width: 5rem" v-model="sphere.center.x" :max-fraction-digits="2" input-id="x-pos" :step fluid/>
+          <InputNumber @value-change="$emit('updated', sphere, material, index)" showButtons size="small"  v-model="sphere.center.x" :max-fraction-digits="2" input-id="x-pos" :step fluid/>
         </div>
         <div >
           <label for="y-pos" class=""> y: </label>
-          <InputNumber @value-change="$emit('updated', sphere, material, index)" showButtons size="small" style="width: 5rem" v-model="sphere.center.y" :max-fraction-digits="2" input-id="y-pos" :step fluid/>
+          <InputNumber @value-change="$emit('updated', sphere, material, index)" showButtons size="small"  v-model="sphere.center.y" :max-fraction-digits="2" input-id="y-pos" :step fluid/>
         </div>
         <div>
           <label for="z-pos"> z: </label>
-          <InputNumber @value-change="$emit('updated', sphere, material, index)" showButtons size="small" style="width: 5rem" v-model="sphere.center.z" :max-fraction-digits="2" input-id="z-pos" :step fluid/>
+          <InputNumber @value-change="$emit('updated', sphere, material, index)" showButtons size="small"  v-model="sphere.center.z" :max-fraction-digits="2" input-id="z-pos" :step fluid/>
         </div>
       </div>
       <div class="flex flex-wrap mt-2">
